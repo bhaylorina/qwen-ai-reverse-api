@@ -61,6 +61,9 @@ class QwenAiStreamHandler:
                         yield self._make_chunk({"reasoning_content": content})
                 elif phase == 'answer' or (phase is None and content):
                     if content:
+                        if not self.initial_chunk_sent:
+                            yield self._make_chunk({"role": "assistant", "content": ""})
+                            self.initial_chunk_sent = True
                         self.content += content
                         yield self._make_chunk({"content": content})
                 if status == 'finished' and (phase == 'answer' or phase is None):
